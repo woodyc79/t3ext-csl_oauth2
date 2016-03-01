@@ -1,0 +1,28 @@
+{
+  "name": "causal/csl_oauth2",
+  "type": "typo3-cms-extension",
+  "description": "This extension transforms your TYPO3 website into an OAuth2 server.",
+  "keywords": [
+    "TYPO3 CMS",
+    "OAuth2",
+    "Security",
+    "Web Service"
+  ],
+  "homepage": "https://github.com/xperseguers/t3ext-csl_oauth2",
+  "support": {
+    "issues": "https://github.com/xperseguers/t3ext-csl_oauth2/issues"
+  },
+  "authors": [
+    {
+      "name": "Xavier Perseguers",
+      "email": "xavier@causal.ch",
+      "homepage": "https://www.causal.ch",
+      "role": "Developer"
+    }
+  ],
+  "license": "GPL-2.0+",
+  "require": {
+    "php": ">= 5.5.0, <= 7.0.99",
+    "bshaffer/oauth2-server-php": "~1.8"
+  }
+}
