@@ -53,7 +53,45 @@ class DataHandler
         }
 
         if (!empty($incomingFieldArray['reset_client_secret'])) {
+            // Actually reset the client secret
             $incomingFieldArray['client_secret'] = '';
+        }
+
+        if (!empty($incomingFieldArray['redirect_uri'])) {
+            $isValidRedirectUri = GeneralUtility::isValidUrl($incomingFieldArray['redirect_uri']);
+            $info = parse_url($incomingFieldArray['redirect_uri']);
+            if (!in_array($info['scheme'], ['http', 'https'])) {
+                // Redirect URI must be associated with a protocol
+                $isValidRedirectUri = false;
+            }
+            if (!empty($info['query']) || strpos($info['path'], '../') !== false) {
+                // Can not contain fragments of URLs or relative paths
+                $isValidRedirectUri = false;
+            }
+            if (GeneralUtility::validIP($info['host'])) {
+                $reservedIPv4Addresses = [
+                    '10.0.0.0/8',       // Used for local communications within a private network as specified by RFC 1918
+                    '127.0.0.0/8',      // Used for loopback addresses to the local host, as specified by RFC 990
+                    '172.16.0.0/12',    // Used for local communications within a private network as specified by RFC 1918
+                    '192.168.0.0/16',   // Used for local communications within a private network as specified by RFC 1918
+                ];
+                $reservedIPv6Addresses = [
+                    'fc00::/7',         // Unique local address
+                ];
+                $isPrivate = false;
+                if (GeneralUtility::validIPv4($info['host']) && GeneralUtility::cmpIPv4($info['host'], implode(',', $reservedIPv4Addresses))) {
+                    $isPrivate = true;
+                } elseif (GeneralUtility::validIPv6($info['host']) && GeneralUtility::cmpIPv6($info['host'], implode(',', $reservedIPv6Addresses))) {
+                    $isPrivate = true;
+                }
+                if (!$isPrivate) {
+                    // Can not be a public IP address
+                    $isValidRedirectUri = false;
+                }
+            }
+            if (!$isValidRedirectUri) {
+                unset($incomingFieldArray['redirect_uri']);
+            }
         }
 
         unset($incomingFieldArray['reset_client_secret']);
