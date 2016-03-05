@@ -31,11 +31,11 @@ class Typo3Pdo extends \OAuth2\Storage\Pdo {
     public function __construct()
     {
         $dsn = 'mysql:dbname=' . TYPO3_db . ';';
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['DB']['socket'])) {
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['socket'])) {
             $dsn .= 'unix_socket=' . $GLOBALS['TYPO3_CONF_VARS']['DB']['socket'];
         } else {
             $dsn .= 'host=' . TYPO3_db_host;
-            if (isset($GLOBALS['TYPO3_CONF_VARS']['DB']['port'])) {
+            if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['port'])) {
                 $dsn .= ';port=' . (int)$GLOBALS['TYPO3_CONF_VARS']['DB']['port'];
             }
         }
@@ -56,5 +56,5 @@ class Typo3Pdo extends \OAuth2\Storage\Pdo {
             //'public_key_table'  => 'oauth_public_keys',
         ]);
     }
-        
+
 }

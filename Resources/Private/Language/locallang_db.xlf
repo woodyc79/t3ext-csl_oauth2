@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2016-03-04T11:19:18Z" product-name="csl_oauth2">
+		<header/>
+		<body>
+			<trans-unit id="tx_csloauth2_oauth_clients">
+				<source>OAuth2 Client</source>
+			</trans-unit>
+			<trans-unit id="tx_csloauth2_oauth_clients.name">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="tx_csloauth2_oauth_clients.client_id">
+				<source>Client ID</source>
+			</trans-unit>
+			<trans-unit id="tx_csloauth2_oauth_clients.client_secret">
+				<source>Client Secret</source>
+			</trans-unit>
+			<trans-unit id="tx_csloauth2_oauth_clients.redirect_uri">
+				<source>Authorized Redirect URI</source>
+			</trans-unit>
+			<trans-unit id="tx_csloauth2_oauth_clients.redirect_uri.description">
+				<source>Use for queries performed from a web server. This is the path of your application to which users are redirected after they authenticate with this TYPO3 website. The access authorization code will be added to the path. It must be associated with a protocol. Can not contain fragments of URLs or relative paths. Can not be a public IP address.</source>
+			</trans-unit>
+
+			<trans-unit id="palette.client_secret">
+				<source>Client Secret</source>
+			</trans-unit>
+			<trans-unit id="palette.restrictions">
+				<source>Restrictions</source>
+			</trans-unit>
+
+			<trans-unit id="action.reset">
+				<source>Reset</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
