@@ -49,14 +49,34 @@ class Server {
     /**
      * Handles an authorize request.
      *
+     * @return void
+     */
+    public function handleAuthorizeRequest()
+    {
+        $request = \OAuth2\Request::createFromGlobals();
+        $response = new \OAuth2\Response();
+
+        // Validate the authorize request. if it is invalid, redirect back to the client with the errors in tow
+        if (!$this->oauth2Server->validateAuthorizeRequest($request, $response)) {
+            $response->send();
+        }
+
+        echo 'TODO: Generate form to authorize the request';
+    }
+
+    /**
+     * This method is called once the user decides to authorize or cancel the client
+     * app's authorization request.
+     *
      * @param bool $isAuthorized
      * @param int $userId [Optional] user id
      * @return void
      */
-    public function handleAuthorizeRequest($isAuthorized, $userId = null)
+    public function handleAuthorizeFormSubmitRequest($isAuthorized, $userId = null)
     {
         $request = \OAuth2\Request::createFromGlobals();
         $response = new \OAuth2\Response();
+
         $this->oauth2Server->handleAuthorizeRequest($request, $response, $isAuthorized, $userId)->send();
     }
 
@@ -77,9 +97,12 @@ $server = new Server();
 $mode = GeneralUtility::_GP('mode');
 switch ($mode) {
     case 'authorize':
-        $isAuthorized = true;   // false if user finally denied access
+        $server->handleAuthorizeRequest();
+        break;
+    case 'authorizeFormSubmit':
+        $isAuthorized = false;   // false if user finally denied access
         $userId = 1234; // A value on your server that identifies the user
-        $server->handleAuthorizeRequest($isAuthorized, $userId);
+        $server->handleAuthorizeFormSubmitRequest($isAuthorized, $userId);
         break;
     case 'token':
         $server->handleTokenRequest();
