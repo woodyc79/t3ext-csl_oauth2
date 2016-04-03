@@ -30,6 +30,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ClientsWizard
 {
 
+    /**
+     * @var string
+     */
     protected $extKey = 'csl_oauth2';
 
     /**

@@ -9,6 +9,7 @@ CREATE TABLE tx_csloauth2_oauth_clients (
   hidden tinyint(4) DEFAULT '0' NOT NULL,
 
   name varchar(80) NOT NULL,
+  typo3_mode char(2) NOT NULL DEFAULT 'BE',
   client_id varchar(80) NOT NULL,
   client_secret varchar(80),
   redirect_uri varchar(2000) NOT NULL,

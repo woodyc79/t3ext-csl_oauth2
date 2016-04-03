@@ -16,12 +16,12 @@ return array(
         'iconfile' => 'EXT:csl_oauth2/Resources/Public/Icons/tx_csloauth2_oauth_clients.png',
     ),
     'interface' => array(
-        'showRecordFieldList' => 'hidden, name, client_id, client_secret, reset_client_secret, redirect_uri',
+        'showRecordFieldList' => 'hidden, name, typo3_context, client_id, client_secret, reset_client_secret, redirect_uri',
     ),
     'types' => array(
         '1' => array(
             'showitem' => '
-                        hidden, name, client_id, map,
+                        hidden, name, typo3_context, client_id, map,
                         --palette--;LLL:EXT:csl_oauth2/Resources/Private/Language/locallang_db.xlf:palette.client_secret;client_secret,
                         --palette--;LLL:EXT:csl_oauth2/Resources/Private/Language/locallang_db.xlf:palette.restrictions;restrictions'
         ),
@@ -52,6 +52,25 @@ return array(
                 'type' => 'input',
                 'size' => '30',
                 'eval' => 'required,trim',
+            )
+        ),
+        'typo3_context' => array(
+            'exclude' => 0,
+            'label' => 'LLL:EXT:csl_oauth2/Resources/Private/Language/locallang_db.xlf:tx_csloauth2_oauth_clients.typo3_context',
+            'config' => array(
+                'type' => 'select',
+                'items' => array(
+                    array(
+                        'LLL:EXT:csl_oauth2/Resources/Private/Language/locallang_db.xlf:tx_csloauth2_oauth_clients.typo3_context.BE',
+                        'BE'
+                    ),
+                    array(
+                        'LLL:EXT:csl_oauth2/Resources/Private/Language/locallang_db.xlf:tx_csloauth2_oauth_clients.typo3_context.FE',
+                        'FE'
+                    ),
+                ),
+                'size' => 1,
+                'maxitems' => 1,
             )
         ),
         'client_id' => array(

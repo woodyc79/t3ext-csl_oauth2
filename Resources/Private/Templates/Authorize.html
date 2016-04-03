@@ -2,7 +2,10 @@
 
 <f:section name="main">
 
-    <h1>Welcome to the OAuth2.0 Server!</h1>
+    <h1>
+        <img src="{f:uri.resource(path:'Icons/typo3.png')}" width="64" alt="">
+        {client.name}
+    </h1>
 
     <p class="lead">You have been sent here by {client.name}.</p>
 
@@ -23,19 +26,17 @@
         <li>miscellaneous nefarious purposes</li>
     </ul>
 
-    <p>Click the button below to complete the authorize request and grant an Access Token to {client.name}.</p>
-
     <ul class="list-inline authorize_options">
         <li>
-            <form id="authorize" action="{actionUrl}" method="post">
-                <button type="button" class="btn btn-success navbar-btn" onclick="document.getElementById('authorize').submit();">Yes, I authorize this request</button>
-                <input type="hidden" name="authorize" value="1">
+            <form id="cancel" action="{actionUrl}" method="post">
+                <button type="button" class="btn btn-default navbar-btn" onclick="document.getElementById('cancel').submit();">Cancel</button>
+                <input type="hidden" name="authorize" value="0">
             </form>
         </li>
         <li>
-            <form id="cancel" action="{actionUrl}" method="post">
-                <button type="button" class="btn btn-danger navbar-btn" onclick="document.getElementById('cancel').submit();">Cancel</button>
-                <input type="hidden" name="authorize" value="0">
+            <form id="authorize" action="{actionUrl}" method="post">
+                <button type="button" class="btn btn-primary navbar-btn" onclick="document.getElementById('authorize').submit();">Yes, I authorize this request</button>
+                <input type="hidden" name="authorize" value="1">
             </form>
         </li>
     </ul>

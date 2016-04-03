@@ -9,6 +9,15 @@
 			<trans-unit id="tx_csloauth2_oauth_clients.name">
 				<source>Name</source>
 			</trans-unit>
+			<trans-unit id="tx_csloauth2_oauth_clients.typo3_context">
+				<source>TYPO3 Authentication Context</source>
+			</trans-unit>
+			<trans-unit id="tx_csloauth2_oauth_clients.typo3_context.BE">
+				<source>Backend - User authentication using a Backend user</source>
+			</trans-unit>
+			<trans-unit id="tx_csloauth2_oauth_clients.typo3_context.FE">
+				<source>Frontend - User authentication using a Frontend user</source>
+			</trans-unit>
 			<trans-unit id="tx_csloauth2_oauth_clients.client_id">
 				<source>Client ID</source>
 			</trans-unit>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2016-04-03T16:58:41Z" product-name="csl_oauth2">
+		<header/>
+		<body>
+			<trans-unit id="login.welcome.1">
+				<source>Welcome on this website. You have been sent here by %s.</source>
+			</trans-unit>
+			<trans-unit id="login.welcome.2">
+				<source>In order to proceed, please authenticate.</source>
+			</trans-unit>
+			<trans-unit id="login.username">
+				<source>Username</source>
+			</trans-unit>
+			<trans-unit id="login.username.placeholder">
+				<source>Enter your username</source>
+			</trans-unit>
+			<trans-unit id="login.password">
+				<source>Password</source>
+			</trans-unit>
+			<trans-unit id="login.password.placeholder">
+				<source>Enter your password</source>
+			</trans-unit>
+			<trans-unit id="login.submit">
+				<source>Sign in</source>
+			</trans-unit>
+			<trans-unit id="login.error.title">
+				<source>Your login attempt did not succeed</source>
+			</trans-unit>
+			<trans-unit id="login.error.message">
+				<source>Make sure to spell your username and password correctly, including upper/lowercase characters.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

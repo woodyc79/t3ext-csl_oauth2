@@ -77,28 +77,57 @@ class Server {
             return;
         }
 
-        $clientId = GeneralUtility::_GP('client_id');
+        $clientId = GeneralUtility::_GET('client_id');
         $storage = $this->oauth2Server->getStorage('client');
         $clientData = $storage->getClientDetails($clientId);
+        $actionParameters = GeneralUtility::_GET();
+        $username = '';
+        $messages = [];
+        $doLogin = GeneralUtility::_POST('login');
+
+        session_start();
+
+        if ($doLogin) {
+            $username = GeneralUtility::_POST('username');
+            $password = GeneralUtility::_POST('password');
+            if (!(empty($username) || empty($password))) {
+                $this->doLogin($clientData['typo3_context'], $username, $password);
+            }
+        }
+
+        if ($this->isAuthenticated($clientData['client_id'])) {
+            $template = 'Authorize.html';
+            $actionParameters['mode'] = 'authorizeFormSubmit';
+        } else {
+            $template = 'Login.html';
+            if ($doLogin) {
+                // Authentication failed
+                $messages[] = [
+                    'type' => 'danger',
+                    'title' => $this->translate('login.error.title'),
+                    'message' => $this->translate('login.error.message'),
+                ];
+            }
+        }
+
+        $actionUrl = GeneralUtility::getIndpEnv('SCRIPT_NAME') . '?' . http_build_query($actionParameters);
 
         // Generate a form to authorize the request
         /** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
         $view = GeneralUtility::makeInstance(\TYPO3\CMS\Fluid\View\StandaloneView::class);
         $view->setLayoutRootPaths([$this->extPath . 'Resources/Private/Layouts/']);
         $view->setPartialRootPaths([$this->extPath . 'Resources/Private/Partials/']);
-        $view->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/Authorize.html');
+        $view->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/' . $template);
 
         // Initialize localization
         $view->getRequest()->setControllerExtensionName($this->extKey);
-
-        $actionParameters = GeneralUtility::_GET();
-        $actionParameters['mode'] = 'authorizeFormSubmit';
-        $actionUrl = GeneralUtility::getIndpEnv('SCRIPT_NAME') . '?' . http_build_query($actionParameters);
 
         $view->assignMultiple([
             'siteName' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'],
             'client' => $clientData,
             'actionUrl' => $actionUrl,
+            'username' => $username,
+            'messages' => $messages,
         ]);
 
         $html = $view->render();
@@ -131,11 +160,89 @@ class Server {
         $server->handleTokenRequest($request)->send();
     }
 
+    /**
+     * Translates a label.
+     *
+     * @param string $id
+     * @param array $arguments
+     * @return null|string
+     */
+    protected function translate($id, array $arguments = null)
+    {
+        $value = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($id, $this->extKey, $arguments);
+        return $value !== null ? $value : $id;
+    }
+
+    /**
+     * Performs a TYPO3 login with given credentials.
+     *
+     * @param string $context
+     * @param string $username
+     * @param string $password
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected function doLogin($context, $username, $password)
+    {
+        // TODO: rely on TYPO3 itself to authenticate
+
+        switch ($context) {
+            case 'BE':
+                $table = 'be_users';
+                break;
+            case 'FE':
+                $table = 'fe_users';
+                break;
+            default:
+                throw new \InvalidArgumentException('Context "' . $context . '" is not yet implemented', 1459697724);
+        }
+
+        $database = $this->getDatabaseConnection();
+        $user = $database->exec_SELECTgetSingleRow(
+            'uid, password',
+            $table,
+            'username=' . $database->fullQuoteStr($username, $table) . ' AND disable=0 AND deleted=0'
+        );
+        if (!empty($user)) {
+            $hashedPassword = $user['password'];
+            $objInstanceSaltedPW = \TYPO3\CMS\Saltedpasswords\Salt\SaltFactory::getSaltingInstance($hashedPassword);
+            if (is_object($objInstanceSaltedPW)) {
+                $validPasswd = $objInstanceSaltedPW->checkPassword($password, $hashedPassword);
+                if ($validPasswd) {
+                    $_SESSION['client_id'] = GeneralUtility::_GET('client_id');
+                    $_SESSION['user_id'] = (int)$user['uid'];
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $clientId
+     * @return bool
+     */
+    protected function isAuthenticated($clientId)
+    {
+        $isAuthenticated = false;
+
+        if ($_SESSION['client_id'] === $clientId) {
+            $isAuthenticated = (int)$_SESSION['user_id'] > 0;
+        }
+
+        return $isAuthenticated;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     */
+    protected function getDatabaseConnection()
+    {
+        return $GLOBALS['TYPO3_DB'];
+    }
 }
 
 $server = new Server();
 
-$mode = GeneralUtility::_GP('mode');
+$mode = GeneralUtility::_GET('mode');
 switch ($mode) {
     case 'authorize':
         $server->handleAuthorizeRequest();
