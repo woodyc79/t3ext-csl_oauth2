@@ -18,6 +18,19 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Server {
 
+    /**
+     * @var string
+     */
+    protected $extKey = 'csl_oauth2';
+
+    /**
+     * @var string
+     */
+    protected $extPath;
+
+    /**
+     * @var \OAuth2\Server
+     */
     protected $oauth2Server;
 
     /**
@@ -25,6 +38,8 @@ class Server {
      */
     public function __construct()
     {
+        $this->extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($this->extKey);
+
         $storage = new \Causal\CslOauth2\Storage\Typo3Pdo();
         $this->oauth2Server = new \OAuth2\Server($storage, [
             'allow_implicit' => true,
@@ -59,9 +74,35 @@ class Server {
         // Validate the authorize request. if it is invalid, redirect back to the client with the errors in tow
         if (!$this->oauth2Server->validateAuthorizeRequest($request, $response)) {
             $response->send();
+            return;
         }
 
-        echo 'TODO: Generate form to authorize the request';
+        $clientId = GeneralUtility::_GP('client_id');
+        $storage = $this->oauth2Server->getStorage('client');
+        $clientData = $storage->getClientDetails($clientId);
+
+        // Generate a form to authorize the request
+        /** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
+        $view = GeneralUtility::makeInstance(\TYPO3\CMS\Fluid\View\StandaloneView::class);
+        $view->setLayoutRootPaths([$this->extPath . 'Resources/Private/Layouts/']);
+        $view->setPartialRootPaths([$this->extPath . 'Resources/Private/Partials/']);
+        $view->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/Authorize.html');
+
+        // Initialize localization
+        $view->getRequest()->setControllerExtensionName($this->extKey);
+
+        $actionParameters = GeneralUtility::_GET();
+        $actionParameters['mode'] = 'authorizeFormSubmit';
+        $actionUrl = GeneralUtility::getIndpEnv('SCRIPT_NAME') . '?' . http_build_query($actionParameters);
+
+        $view->assignMultiple([
+            'siteName' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'],
+            'client' => $clientData,
+            'actionUrl' => $actionUrl,
+        ]);
+
+        $html = $view->render();
+        echo $html;
     }
 
     /**
@@ -100,7 +141,7 @@ switch ($mode) {
         $server->handleAuthorizeRequest();
         break;
     case 'authorizeFormSubmit':
-        $isAuthorized = false;   // false if user finally denied access
+        $isAuthorized = (bool)GeneralUtility::_POST('authorize');
         $userId = 1234; // A value on your server that identifies the user
         $server->handleAuthorizeFormSubmitRequest($isAuthorized, $userId);
         break;
