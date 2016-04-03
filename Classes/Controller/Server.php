@@ -85,8 +85,6 @@ class Server {
         $messages = [];
         $doLogin = GeneralUtility::_POST('login');
 
-        session_start();
-
         if ($doLogin) {
             $username = GeneralUtility::_POST('username');
             $password = GeneralUtility::_POST('password');
@@ -157,7 +155,34 @@ class Server {
     public function handleTokenRequest()
     {
         $request = \OAuth2\Request::createFromGlobals();
-        $server->handleTokenRequest($request)->send();
+        $this->oauth2Server->handleTokenRequest($request)->send();
+    }
+
+    /**
+     * Returns true if current user is authenticated for a given OAuth2 client.
+     *
+     * @param string $clientId
+     * @return bool
+     */
+    public function isAuthenticated($clientId)
+    {
+        $isAuthenticated = false;
+
+        if ($_SESSION['client_id'] === $clientId) {
+            $isAuthenticated = $this->getAuthenticatedUser() > 0;
+        }
+
+        return $isAuthenticated;
+    }
+
+    /**
+     * Returns the authenticated user id.
+     *
+     * @return int
+     */
+    public function getAuthenticatedUser()
+    {
+        return (int)$_SESSION['user_id'];
     }
 
     /**
@@ -217,21 +242,6 @@ class Server {
     }
 
     /**
-     * @param string $clientId
-     * @return bool
-     */
-    protected function isAuthenticated($clientId)
-    {
-        $isAuthenticated = false;
-
-        if ($_SESSION['client_id'] === $clientId) {
-            $isAuthenticated = (int)$_SESSION['user_id'] > 0;
-        }
-
-        return $isAuthenticated;
-    }
-
-    /**
      * @return \TYPO3\CMS\Core\Database\DatabaseConnection
      */
     protected function getDatabaseConnection()
@@ -245,11 +255,20 @@ $server = new Server();
 $mode = GeneralUtility::_GET('mode');
 switch ($mode) {
     case 'authorize':
+        session_start();
         $server->handleAuthorizeRequest();
         break;
     case 'authorizeFormSubmit':
-        $isAuthorized = (bool)GeneralUtility::_POST('authorize');
-        $userId = 1234; // A value on your server that identifies the user
+        session_start();
+        $clientId = GeneralUtility::_GET('client_id');
+        $isAuthorized = false;
+        $userId = null;
+
+        if ($server->isAuthenticated($clientId)) {
+            $userId = $server->getAuthenticatedUser();
+            $isAuthorized = (bool)GeneralUtility::_POST('authorize');
+        }
+
         $server->handleAuthorizeFormSubmitRequest($isAuthorized, $userId);
         break;
     case 'token':
