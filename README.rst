@@ -47,7 +47,7 @@ type "OAuth2 Client".
 4. OAuth2 endpoints
 -------------------
 
-The general URL to use for the OAuth2 workflow and then accessing your own API is:
+The general URL to use for the OAuth2 workflow is:
 
     https://<www.typo3website-url.tld>/?eID=csl_oauth2&mode=<mode>&<additional-parameters>
 
@@ -56,8 +56,7 @@ where ``<mode>`` may be one of:
 * ``authorize``: This starts the OAuth 2.0 authorization flow. This isn't really an API call — it's the web page that
   lets the user sign in to your TYPO3 website and authorize your app. After the user decides whether or not to authorize
   your app, they will be redirected to the URI specified by ``redirect_uri``.
-* ``token``: TODO
-* ``your-own-segment``
+* ``token``: This endpoint is sued to acquire a bearer token.
 
 
 Mode ``authorize``
@@ -93,7 +92,10 @@ state             Up to 500 bytes of arbitrary data that will be passed back to 
 ================  =============================================================================================
 
 This will show an authorization form where the user will be able to authenticate and confirm she wants to authorize your
-client application to impersonate her on the TYPO3 website.
+client application to impersonate her on the TYPO3 website:
+
+.. image:: Documentation/Images/oauth2-authorize.png
+    :alt: Sample OAuth2 authorize screen
 
 At the end of the process, your client application will be called back (using ``redirect_uri``) with a JSON response.
 
