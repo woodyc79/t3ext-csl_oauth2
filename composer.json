@@ -18,11 +18,17 @@
       "email": "xavier@causal.ch",
       "homepage": "https://www.causal.ch",
       "role": "Developer"
+    },
+    {
+      "name": "Christian Holzmann",
+      "email": "mail@innovations.at",
+      "homepage": "http://www.innovations.at",
+      "role": "Developer"
     }
   ],
   "license": "GPL-2.0+",
   "require": {
-    "php": ">= 5.5.0, <= 7.0.99",
+    "php": ">= 7.0.0, <= 7.2.99",
     "typo3/cms-core": ">= 6.2.0, <= 8.99.99"
   },
   "autoload": {
