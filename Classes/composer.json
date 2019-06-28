@@ -22,7 +22,7 @@
   ],
   "license": "GPL-2.0+",
   "require": {
-    "php": ">= 5.5.0, <= 7.0.99",
+    "php": ">= 5.5.0, <= 7.2.99",
     "bshaffer/oauth2-server-php": "~1.8"
   }
 }
